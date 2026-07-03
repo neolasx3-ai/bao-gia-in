@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TÍNH GIÁ THÙNG ĐỐI KHẨU</title>
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f3f4f6;
+    padding:20px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+label{
+    display:block;
+    margin-bottom:5px;
+    font-weight:bold;
+}
+
+input,select{
+    width:100%;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    box-sizing:border-box;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    margin-top:25px;
+    padding:15px;
+    border:none;
+    background:black;
+    color:white;
+    font-size:18px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.result{
+    margin-top:25px;
+    background:#f9fafb;
+    padding:20px;
+    border-radius:10px;
+    line-height:1.8;
+    font-size:18px;
+}
+
+.total{
+    color:red;
+    font-size:32px;
+    font-weight:bold;
+}
+
+@media(max-width:768px){
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>TÍNH GIÁ THÙNG ĐỐI KHẨU</h1>
+
+<div class="grid">
+
+<div>
+<label>Ngang thùng (cm)</label>
+<input type="number" id="ngang" value="51">
+</div>
+
+<div>
+<label>Dọc thùng (cm)</label>
+<input type="number" id="doc" value="41">
+</div>
+
+<div>
+<label>Cao thùng (cm)</label>
+<input type="number" id="cao" value="19">
+</div>
+
+<div>
+<label>Số lượng</label>
+<input type="number" id="soluong" value="1500">
+</div>
+
+<div>
+<label>Bù hao giấy</label>
+<input type="number" id="buhao" value="100">
+</div>
+
+<div>
+<label>Kiểu hộp</label>
+
+<select id="kieuHop">
+
+<option value="1" selected>
+1 Mảnh
+</option>
+
+<option value="2">
+2 Mảnh
+</option>
+
+</select>
+
+</div>
+
+<div>
+<label>Loại giấy bồi</label>
+
+<select id="loaiGiay">
+
+<option value="16">
+Kraft nâu - 16đ
+</option>
+
+<option value="17">
+Duplex - 17đ
+</option>
+
+<option value="18">
+Ivory - 18đ
+</option>
+
+</select>
+
+</div>
+
+<div>
+<label>Định lượng giấy (gsm)</label>
+<input type="number" id="gsm" value="250">
+</div>
+
+<div>
+<label>Giá giấy</label>
+<input type="number" id="giaGiay" value="16">
+</div>
+
+<div>
+<label>Loại sóng</label>
+
+<select id="song">
+
+<option value="7000">
+Sóng B nâu - 7.000đ
+</option>
+
+<option value="8000">
+Sóng B trắng - 8.000đ
+</option>
+
+<option value="9000">
+Sóng C - 9.000đ
+</option>
+
+<option value="10300">
+Sóng BC - 10.300đ
+</option>
+
+<option value="5300">
+Sóng E nâu - 5.300đ
+</option>
+
+<option value="6300">
+Sóng E trắng - 6.300đ
+</option>
+
+</select>
+
+</div>
+
+<div>
+<label>Cán</label>
+
+<select id="can">
+
+<option value="0.24">
+Cán mờ
+</option>
+
+<option value="0">
+Không cán
+</option>
+
+</select>
+
+</div>
+
+<div>
+<label>Vận chuyển</label>
+<input type="number" id="vanchuyen" value="150000">
+</div>
+
+<div>
+<label>Lợi nhuận (%)</label>
+<input type="number" id="loinhuan" value="25">
+</div>
+
+</div>
+
+<button onclick="tinhGia()">
+TÍNH GIÁ
+</button>
+
+<div class="result" id="ketqua"></div>
+
+</div>
+
+<script>
+
+function format(number){
+
+    return new Intl.NumberFormat('vi-VN')
+    .format(Math.round(number));
+}
+
+/* =========================
+CHỌN KHỔ IN
+========================= */
+
+function tinhKhoIn(A,B){
+
+    let giaIn = 0;
+    let kho = "";
+
+    if((A <= 43 && B <= 32) || (A <= 32 && B <= 43)){
+
+        giaIn = 650000;
+        kho = "32x43";
+    }
+
+    else if((A <= 39.5 && B <= 36.3) || (A <= 36.3 && B <= 39.5)){
+
+        giaIn = 650000;
+        kho = "36.3x39.5";
+    }
+
+    else if((A <= 54.5 && B <= 39.5) || (A <= 39.5 && B <= 54.5)){
+
+        giaIn = 650000;
+        kho = "39.5x54.5";
+    }
+
+    else if((A <= 65 && B <= 43) || (A <= 43 && B <= 65)){
+
+        giaIn = 650000;
+        kho = "43x65";
+    }
+
+    else if((A <= 72 && B <= 52) || (A <= 52 && B <= 72)){
+
+        giaIn = 900000;
+        kho = "52x72";
+    }
+
+    else if((A <= 86 && B <= 65) || (A <= 65 && B <= 86)){
+
+        giaIn = 1200000;
+        kho = "65x86";
+    }
+
+    else if((A <= 102 && B <= 72) || (A <= 72 && B <= 102)){
+
+        giaIn = 1200000;
+        kho = "72x102";
+    }
+
+    else{
+
+        giaIn = 2500000;
+        kho = "79x109";
+    }
+
+    return {
+        giaIn,
+        kho
+    };
+}
+
+/* =========================
+TÍNH GIÁ
+========================= */
+
+function tinhGia(){
+
+    let ngang =
+        Number(document.getElementById('ngang').value);
+
+    let doc =
+        Number(document.getElementById('doc').value);
+
+    let hong =
+        Number(document.getElementById('cao').value);
+
+    let sl =
+        Number(document.getElementById('soluong').value);
+
+    let buhao =
+        Number(document.getElementById('buhao').value);
+
+    let kieuHop =
+        Number(document.getElementById('kieuHop').value);
+
+    let gsm =
+        Number(document.getElementById('gsm').value);
+
+    let giaGiay =
+        Number(document.getElementById('giaGiay').value);
+
+    let giaSong =
+        Number(document.getElementById('song').value);
+
+    let giaCan =
+        Number(document.getElementById('can').value);
+
+    let vanchuyen =
+        Number(document.getElementById('vanchuyen').value);
+
+    let loinhuan =
+        Number(document.getElementById('loinhuan').value);
+
+    /* =========================
+    SỐ TỜ GIẤY
+    ========================= */
+
+    let tongTo = 0;
+
+    if(kieuHop == 2){
+
+        tongTo =
+            (sl * 2) + buhao;
+
+    }
+
+    else{
+
+        tongTo =
+            sl + buhao;
+
+    }
+
+    /* =========================
+    TÍNH KHỔ
+    ========================= */
+
+    let A = 0;
+    let B = 0;
+
+    if(kieuHop == 2){
+
+        A = ngang + hong + 2;
+
+    }else{
+
+        A = ((ngang + hong) * 2) + 2;
+    }
+
+    B = doc + hong;
+
+    /* =========================
+    NỚI NỀN
+    ========================= */
+
+    
+
+    /* =========================
+    ĐỔI MÉT
+    ========================= */
+
+    let mA = A / 100;
+    let mB = B / 100;
+
+    /* =========================
+    TIỀN GIẤY
+    ========================= */
+
+    let G =
+        mA *
+        mB *
+        gsm *
+        giaGiay *
+        tongTo;
+
+    /* =========================
+    TIỀN SÓNG
+    ========================= */
+
+    let S =
+        mA *
+        mB *
+        tongTo *
+        giaSong;
+
+    /* =========================
+    TIỀN CÁN
+    ========================= */
+
+    let C =
+        A *
+        B *
+        tongTo *
+        giaCan;
+
+    /* =========================
+    TIỀN IN
+    ========================= */
+
+    let inData =
+        tinhKhoIn(A,B);
+
+    let I =
+        inData.giaIn;
+
+    if(tongTo > 1000){
+
+        I +=
+            (tongTo - 1000)
+            * 120;
+    }
+
+    /* =========================
+    CHI PHÍ KHÁC
+    ========================= */
+
+    let khuon = 350000;
+
+    let be =
+        sl * 350;
+
+    let dan =
+        sl * 350;
+
+    /* =========================
+    GIÁ SX
+    ========================= */
+
+    let giaSX =
+        G +
+        S +
+        C +
+        I +
+        khuon +
+        be +
+        dan +
+        vanchuyen;
+
+    /* =========================
+    GIÁ CÓ LÃI
+    ========================= */
+
+    let giaCoLai =
+        giaSX /
+        (1 - (loinhuan / 100));
+
+    /* =========================
+    GIÁ / THÙNG
+    ========================= */
+
+    let giaMoiThung =
+        giaCoLai / sl;
+
+    /* =========================
+    HIỂN THỊ
+    ========================= */
+
+    document.getElementById('ketqua').innerHTML = `
+
+    <b>Khổ giấy:</b>
+    ${A} x ${B} cm<br>
+
+    <b>Khổ in:</b>
+    ${inData.kho}<br>
+
+    <b>Số tờ tính:</b>
+    ${tongTo} tờ<br><br>
+
+    <b>Tiền giấy:</b>
+    ${format(G)}đ<br>
+
+    <b>Tiền sóng:</b>
+    ${format(S)}đ<br>
+
+    <b>Tiền cán:</b>
+    ${format(C)}đ<br>
+
+    <b>Tiền in:</b>
+    ${format(I)}đ<br>
+
+    <b>Khuôn:</b>
+    ${format(khuon)}đ<br>
+
+    <b>Bế:</b>
+    ${format(be)}đ<br>
+
+    <b>Dán:</b>
+    ${format(dan)}đ<br>
+
+    <b>Vận chuyển:</b>
+    ${format(vanchuyen)}đ<br><br>
+
+    <div class="total">
+
+    Tổng giá:
+    ${format(giaCoLai)}đ
+
+    </div>
+
+    <br>
+
+    <b>Giá / thùng:</b>
+    ${format(giaMoiThung)}đ
+
+    `;
+
+}
+
+</script>
+
+</body>
+</html>
